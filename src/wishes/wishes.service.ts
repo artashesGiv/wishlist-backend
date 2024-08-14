@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateWishDto } from './dto/create-wish.dto'
 import { UpdateWishDto } from './dto/update-wish.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Wish } from './entities/wish.entity'
+import { createExceptionFromError } from '../utils/error.utils'
 
 @Injectable()
 export class WishesService {
@@ -13,24 +14,61 @@ export class WishesService {
   ) {}
 
   async create(createWishDto: CreateWishDto) {
-    console.log(createWishDto)
-    return 'This action adds a new wish'
+    try {
+      const wish = this.wishRepository.create(createWishDto)
+      return await this.wishRepository.save(wish)
+    } catch (error) {
+      throw createExceptionFromError(error, 'Filed to create wishes')
+    }
   }
 
   async findAll(): Promise<Wish[]> {
-    return await this.wishRepository.find()
+    try {
+      return await this.wishRepository.find()
+    } catch (error) {
+      throw createExceptionFromError(error, 'Filed to retrieved wishes')
+    }
   }
 
-  async findOne(id: number) {
-    return await this.wishRepository.findOneBy({ id })
+  async findOne(id: number): Promise<Wish> {
+    try {
+      const wish = await this.wishRepository.findOneBy({ id })
+      if (!wish) {
+        throw new NotFoundException(`Wish with id ${id} not found`)
+      }
+
+      return wish
+    } catch (error) {
+      throw createExceptionFromError(error, 'Filed to retrieved wish')
+    }
   }
 
   async update(id: number, updateWishDto: UpdateWishDto) {
-    console.log(updateWishDto)
-    return `This action updates a #${id} wish`
+    try {
+      const wish = await this.wishRepository.findOneBy({ id })
+      if (!wish) {
+        throw new NotFoundException(`Wish with id ${id} not found`)
+      }
+
+      Object.assign(wish, updateWishDto)
+      return await this.wishRepository.save(wish)
+    } catch (error) {
+      throw createExceptionFromError(error, 'Filed to update wish')
+    }
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} wish`
+    try {
+      const wish = await this.wishRepository.findOneBy({ id })
+      const result = await this.wishRepository.delete(id)
+
+      if (result.affected === 0) {
+        throw new NotFoundException(`Wish with id ${id} not found`)
+      }
+
+      return wish
+    } catch (error) {
+      throw createExceptionFromError(error, 'Filed to delete wish')
+    }
   }
 }
