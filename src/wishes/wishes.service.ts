@@ -4,7 +4,7 @@ import { UpdateWishDto } from './dto/update-wish.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Wish } from './entities/wish.entity'
-import { createExceptionFromError } from '../utils/error.utils'
+import { createExceptionFromError } from '../utils/error.util'
 
 @Injectable()
 export class WishesService {
@@ -30,7 +30,7 @@ export class WishesService {
     }
   }
 
-  async findOne(id: number): Promise<Wish> {
+  async findOne(id: number) {
     try {
       const wish = await this.wishRepository.findOneBy({ id })
       if (!wish) {

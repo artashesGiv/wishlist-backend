@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class Wish {
@@ -7,4 +7,13 @@ export class Wish {
 
   @Column()
   title: string
+
+  @Column({ nullable: true })
+  link?: string
+
+  @Column({ nullable: true })
+  description?: string
+
+  @Column({ nullable: true })
+  price?: number
 }

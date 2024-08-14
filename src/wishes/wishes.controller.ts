@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { WishesService } from './wishes.service'
 import { CreateWishDto } from './dto/create-wish.dto'
 import { UpdateWishDto } from './dto/update-wish.dto'
-import { Wish } from './entities/wish.entity'
 
 @Controller('wish')
 export class WishesController {
@@ -14,12 +13,12 @@ export class WishesController {
   }
 
   @Get()
-  async findAll(): Promise<Wish[]> {
+  async findAll() {
     return await this.wishesService.findAll()
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Wish> {
+  async findOne(@Param('id') id: string) {
     return await this.wishesService.findOne(+id)
   }
 
