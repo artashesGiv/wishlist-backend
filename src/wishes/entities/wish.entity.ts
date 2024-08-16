@@ -11,7 +11,7 @@ export class Wish {
   @Column({ nullable: true })
   link?: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 1000 })
   description?: string
 
   @Column({ nullable: true })
